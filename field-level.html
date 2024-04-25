@@ -1,210 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Field Level Validation</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f2f5;
-      }
-      .error-message {
-        color: #bf2c2c;
-      }
-      .container {
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Level Validation</title>
+<style>
+    .error-message {
+        color: red;
+    }
+    .container {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 100vh;
-      }
-      form {
+    }
+    form {
         display: flex;
         flex-direction: column;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-        width: 100%;
-      }
-      form > div {
-        margin-bottom: 20px;
-      }
-      form > div:last-child {
-        margin-bottom: 0;
-      }
-      label {
-        width: 150px;
+        /* Adjust this width as needed */
+    }
+    form > div {
+        margin-bottom: 10px;
+    }
+    form > div:last-child {
+        margin-bottom: 0; /* Remove margin from the last div */
+    }
+    label {
+        width: 150px; /* Adjust label width as needed */
         text-align: right;
         margin-right: 10px;
-        font-weight: bold;
-      }
-      input,
-      button {
+    }
+    input, button {
         width: 100%;
         box-sizing: border-box;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        outline: none;
-      }
-      input:focus {
-        border-color: #4267b2;
-      }
-      button {
-        background-color: #4267b2;
-        color: #fff;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-      button:hover {
-        background-color: #365899;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <form id="myForm" onsubmit="return validateForm(event)">
+        padding: 5px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <form id="myForm">
+        
         <div>
-          <label for="username">Username:</label>
-          <input type="text" id="username" name="username" />
-          <span id="usernameError" class="error-message"></span>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+            <span id="usernameError" class="error-message"></span>
         </div>
-
+        
         <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" />
-          <span id="emailError" class="error-message"></span>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email">
+            <span id="emailError" class="error-message"></span>
         </div>
-
+        
         <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" name="password" />
-          <span id="passwordError" class="error-message"></span>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <span id="passwordError" class="error-message"></span>
         </div>
-
+        
         <div>
-          <label for="confirmPassword">Confirm Password:</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" />
-          <span id="confirmPasswordError" class="error-message"></span>
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword">
+            <span id="confirmPasswordError" class="error-message"></span>
         </div>
+        
+        <button type="submit" id="submitButton" onclick="validateForm()" >Submit</button>
+    </form>
+</div>
 
-        <button type="submit" id="submitButton" disabled>Submit</button>
-      </form>
-    </div>
 
-    <script>
-      const usernameField = document.getElementById("username");
-      const emailField = document.getElementById("email");
-      const passwordField = document.getElementById("password");
-      const confirmPasswordField = document.getElementById("confirmPassword");
-      const submitButton = document.getElementById("submitButton");
+<script>
+const usernameField = document.getElementById('username');
+const emailField = document.getElementById('email');
+const passwordField = document.getElementById('password');
+const confirmPasswordField = document.getElementById('confirmPassword');
+const submitButton = document.getElementById('submitButton');
 
-      const usernameError = document.getElementById("usernameError");
-      const emailError = document.getElementById("emailError");
-      const passwordError = document.getElementById("passwordError");
-      const confirmPasswordError = document.getElementById(
-        "confirmPasswordError"
-      );
+const usernameError = document.getElementById('usernameError');
+const emailError = document.getElementById('emailError');
+const passwordError = document.getElementById('passwordError');
+const confirmPasswordError = document.getElementById('confirmPasswordError');
 
-      usernameField.addEventListener("blur", validateUsername);
-      emailField.addEventListener("blur", validateEmail);
-      passwordField.addEventListener("blur", validatePassword);
-      confirmPasswordField.addEventListener("blur", validateConfirmPassword);
+usernameField.addEventListener('blur', validateUsername);
+emailField.addEventListener('blur', validateEmail);
+passwordField.addEventListener('blur', validatePassword);
+confirmPasswordField.addEventListener('blur', validateConfirmPassword);
 
-      function validateUsername() {
-        const username = usernameField.value.trim();
-        if (username === "") {
-          usernameError.textContent = "Username is required";
-        } else {
-          usernameError.textContent = "";
-        }
-        toggleSubmitButton();
-      }
+function validateUsername() {
+    const username = usernameField.value.trim();
+    if (username === '') {
+        usernameError.textContent = 'Username is required';
+    } else {
+        usernameError.textContent = '';
+    }
+    toggleSubmitButton();
+}
 
-      function validateEmail() {
-        const email = emailField.value.trim();
-        if (email === "") {
-          emailError.textContent = "Email is required";
-        } else if (!isValidEmail(email)) {
-          emailError.textContent = "Invalid email format";
-        } else {
-          emailError.textContent = "";
-        }
-        toggleSubmitButton();
-      }
+function validateEmail() {
+    const email = emailField.value.trim();
+    if (email === '') {
+        emailError.textContent = 'Email is required';
+    } else if (!isValidEmail(email)) {
+        emailError.textContent = 'Invalid email format';
+    } else {
+        emailError.textContent = '';
+    }
+    toggleSubmitButton();
+}
 
-      function validatePassword() {
-        const password = passwordField.value.trim();
-        if (password === "") {
-          passwordError.textContent = "Password is required";
-        } else if (password.length < 8) {
-          passwordError.textContent = "Password must be at least 8 characters";
-        } else {
-          passwordError.textContent = "";
-        }
-        toggleSubmitButton();
-      }
+function validatePassword() {
+    const password = passwordField.value.trim();
+    if (password === '') {
+        passwordError.textContent = 'Password is required';
+    } else if (password.length < 8) {
+        passwordError.textContent = 'Password must be at least 8 characters';
+    } else {
+        passwordError.textContent = '';
+    }
+    toggleSubmitButton();
+}
 
-      function validateConfirmPassword() {
-        const confirmPassword = confirmPasswordField.value.trim();
-        const password = passwordField.value.trim();
-        if (confirmPassword === "") {
-          confirmPasswordError.textContent = "Please confirm password";
-        } else if (confirmPassword !== password) {
-          confirmPasswordError.textContent = "Passwords do not match";
-        } else {
-          confirmPasswordError.textContent = "";
-        }
-        toggleSubmitButton();
-      }
+function validateConfirmPassword() {
+    const confirmPassword = confirmPasswordField.value.trim();
+    const password = passwordField.value.trim();
+    if (confirmPassword === '') {
+        confirmPasswordError.textContent = 'Please confirm password';
+    } else if (confirmPassword !== password) {
+        confirmPasswordError.textContent = 'Passwords do not match';
+    } else {
+        confirmPasswordError.textContent = '';
+    }
+    toggleSubmitButton();
+}
 
-      function isValidEmail(email) {
-        // Very basic email format validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-      }
+function isValidEmail(email) {
+    // Very basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
 
-      function toggleSubmitButton() {
-        if (
-          !usernameError.textContent &&
-          !emailError.textContent &&
-          !passwordError.textContent &&
-          !confirmPasswordError.textContent
-        ) {
-          submitButton.disabled = false;
-        } else {
-          submitButton.disabled = true;
-        }
-      }
+function toggleSubmitButton() {
+    if (!usernameError.textContent && !emailError.textContent && !passwordError.textContent && !confirmPasswordError.textContent) {
+        submitButton.disabled = false;
+    } else {
+        submitButton.disabled = true;
+    }
+}
 
-      function validateForm(event) {
-      
+function validateForm() {
+    validateUsername();
+    validateEmail();
+    validatePassword();
+    validateConfirmPassword();
+    
+    // Check if there are any error messages
+    if (!usernameError.textContent && !emailError.textContent && !passwordError.textContent && !confirmPasswordError.textContent) {
+        // Form submission logic goes here
+        alert('Form submitted successfully');
+        return true;
+    } else {
 
-        validateUsername();
-        validateEmail();
-        validatePassword();
-        validateConfirmPassword();
+        return false;
+    }
+}
+</script>
 
-        // Check if there are any error messages
-        if (
-          !usernameError.textContent &&
-          !emailError.textContent &&
-          !passwordError.textContent &&
-          !confirmPasswordError.textContent
-        ) {
-          // Form submission logic goes here
-          alert("Form submitted successfully");
-          return true;
-        } else {
-          alert("Form contains errors. Please correct them before submitting.");
-          return false;
-        }
-      }
-    </script>
-  </body>
+</body>
 </html>
